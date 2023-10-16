@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 import com.koreaIT.example.JAM.util.DBUtil;
@@ -87,52 +89,63 @@ public class App {
 			
 		} else if (cmd.equals("article list")) {
 			System.out.println("==게시물 목록==");
-			PreparedStatement pstmt = null;
-			ResultSet rs = null;
+//			PreparedStatement pstmt = null;
+//			ResultSet rs = null;
 
 			ArrayList<Article> articles = new ArrayList<Article>();
 
-			try {
-				String sql = "SELECT *";
-				sql += " FROM article";
-				sql += " ORDER BY id DESC;";
-				System.out.println(sql);
-
-				pstmt = conn.prepareStatement(sql);
-
-				rs = pstmt.executeQuery(sql);
-
-				while (rs.next()) {
-					int id = rs.getInt("id");
-					String regDate = rs.getString("regDate");
-					String updateDate = rs.getString("updateDate");
-					String title = rs.getString("title");
-					String body = rs.getString("body");
-					Article article = new Article(id, regDate, updateDate, title, body);
-					articles.add(article);
-				}
-
-			} catch (SQLException e) {
-				System.out.println("에러 a.l: " + e);
-			} finally {
-				try {
-					if (rs != null && !rs.isClosed()) {
-						rs.close();
-					}
-					if (pstmt != null && !pstmt.isClosed()) {
-						pstmt.close();
-					}
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+			SecSql sql = new SecSql();
+			sql.append("SELECT *");
+			sql.append("FROM article");
+			sql.append("ORDER BY id DESC");
+			
+			List<Map<String, Object>> articleListMap = DBUtil.selectRows(conn, sql);
+			
+			for(Map<String, Object> articleMap : articleListMap) {
+				articles.add(new Article(articleMap));
 			}
+			
+//			try {
+//				String sql = "SELECT *";
+//				sql += " FROM article";
+//				sql += " ORDER BY id DESC;";
+//				System.out.println(sql);
+//
+//				pstmt = conn.prepareStatement(sql);
+//
+//				rs = pstmt.executeQuery(sql);
+//
+//				while (rs.next()) {
+//					int id = rs.getInt("id");
+//					String regDate = rs.getString("regDate");
+//					String updateDate = rs.getString("updateDate");
+//					String title = rs.getString("title");
+//					String body = rs.getString("body");
+//					Article article = new Article(id, regDate, updateDate, title, body);
+//					articles.add(article);
+//				}
+//
+//			} catch (SQLException e) {
+//				System.out.println("에러 a.l: " + e);
+//			} finally {
+//				try {
+//					if (rs != null && !rs.isClosed()) {
+//						rs.close();
+//					}
+//					if (pstmt != null && !pstmt.isClosed()) {
+//						pstmt.close();
+//					}
+//				} catch (SQLException e) {
+//					e.printStackTrace();
+//				}
+//			}
 			if (articles.size() == 0) {
 				System.out.println("게시글이 없습니다");
 				return 0;
 			}
-			System.out.println("번호   /   제목");
+			System.out.println("번호	/	제목");
 			for (Article article : articles) {
-				System.out.printf("%4d   /   %s\n", article.id, article.title);
+				System.out.printf("%d	/	%s\n", article.id, article.title);
 			}
 		} else if (cmd.startsWith("article modify")) {
 			System.out.println("==게시물 수정==");
