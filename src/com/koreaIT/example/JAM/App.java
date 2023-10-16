@@ -68,15 +68,72 @@ public class App {
 		}
 
 		if (cmd.equals("member join")) {
+			String loginId = null;
+			String loginPw = null;
+			String loginPwChk = null;
+			String name = null;
+
 			System.out.println("== 회원가입 ==");
-			System.out.printf("아이디 : ");
-			String loginId = sc.nextLine();
-			System.out.printf("비밀번호 : ");
-			String loginPw = sc.nextLine();
-			System.out.printf("비밀번호 확인 : ");
-			String loginPwChk = sc.nextLine();
-			System.out.printf("이름 : ");
-			String name = sc.nextLine();
+			while (true) {
+				System.out.printf("아이디 : ");
+				loginId = sc.nextLine().trim();
+
+				if (loginId.length() == 0) {
+					System.out.println("아이디를 입력해주세요");
+					continue;
+				}
+
+				SecSql sql = new SecSql();
+				sql.append("SELECT COUNT(*) > 0");
+				sql.append("FROM `member`");
+				sql.append("WHERE loginId = ?", loginId);
+
+				boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+
+				if (isLoginIdDup) {
+					System.out.printf("%s은(는) 이미 사용중인 아이디입니다\n", loginId);
+					continue;
+				}
+
+				System.out.printf("%s은(는) 사용가능한 아이디입니다\n", loginId);
+				break;
+			}
+
+			while (true) {
+				System.out.printf("비밀번호 : ");
+				loginPw = sc.nextLine().trim();
+
+				if (loginPw.length() == 0) {
+					System.out.println("비밀번호를 입력해주세요");
+					continue;
+				}
+				while (true) {
+					System.out.printf("비밀번호 확인 : ");
+					loginPwChk = sc.nextLine().trim();
+
+					if (loginPwChk.length() == 0) {
+						System.out.println("비밀번호확인을 입력해주세요");
+						continue;
+					}
+					break;
+				}
+				if (loginPw.equals(loginPwChk) == false) {
+					System.out.println("비밀번호가 일치하지 않습니다. 비밀번호를 다시 입력해주세요");
+					continue;
+				}
+				break;
+			}
+
+			while (true) {
+				System.out.printf("이름 : ");
+				name = sc.nextLine().trim();
+
+				if (name.length() == 0) {
+					System.out.println("이름을 입력해주세요");
+					continue;
+				}
+				break;
+			}
 
 			SecSql sql = new SecSql();
 			sql.append("INSERT INTO `member`");
@@ -162,7 +219,7 @@ public class App {
 
 			int id = Integer.parseInt(cmd.split(" ")[2]);
 
-			SecSql sql = SecSql.from("SELECT COUNT(*) > 0");
+			SecSql sql = SecSql.from("SELECT COUNT(*)");
 			sql.append("FROM article");
 			sql.append("WHERE id = ?", id);
 
