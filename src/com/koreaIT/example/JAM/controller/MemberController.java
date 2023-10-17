@@ -3,6 +3,7 @@ package com.koreaIT.example.JAM.controller;
 import java.sql.Connection;
 import java.util.Scanner;
 
+import com.koreaIT.example.JAM.Member;
 import com.koreaIT.example.JAM.service.MemberService;
 
 public class MemberController {
@@ -81,7 +82,43 @@ public class MemberController {
 		memberService.doJoin(loginId, loginPw, name);
 
 		System.out.println("회원가입이 완료되었습니다");
-		System.out.printf("[%s] 회원님 환영합니다\n", name);
+	}
+
+	public void doLogin() {
+		System.out.println("== 로그인 ==");
+		
+		while(true) {
+			System.out.printf("아이디 : ");
+			String loginId = sc.nextLine().trim();
+			System.out.printf("비밀번호 : ");
+			String loginPw = sc.nextLine().trim();
+			
+			if (loginId.length() == 0) {
+				System.out.println("아이디를 입력해주세요");
+				continue;
+			}
+			
+			if (loginPw.length() == 0) {
+				System.out.println("비밀번호를 입력해주세요");
+				continue;
+			}
+			
+			Member member = memberService.getMemberByLoginId(loginId);
+			
+			if (member == null) {
+				System.out.printf("[%s] 은(는) 존재하지 않는 아이디입니다\n", loginId);
+				continue;
+			}
+			
+			if (member.loginPw.equals(loginPw) == false) {
+				System.out.println("비밀번호가 일치하지 않습니다");
+				continue;
+			}
+			
+			System.out.printf("[%s] 회원님 환영합니다\n", member.name);
+			
+			break;
+		}
 	}
 
 }
