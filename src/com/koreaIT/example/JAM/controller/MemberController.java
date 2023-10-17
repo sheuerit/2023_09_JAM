@@ -5,6 +5,7 @@ import java.util.Scanner;
 
 import com.koreaIT.example.JAM.Member;
 import com.koreaIT.example.JAM.service.MemberService;
+import com.koreaIT.example.JAM.session.Session;
 
 public class MemberController {
 
@@ -85,6 +86,12 @@ public class MemberController {
 	}
 
 	public void doLogin() {
+		
+		if(Session.isLogined()) {
+			System.out.println("이미 로그인 되어있습니다");
+			return;
+		}
+		
 		System.out.println("== 로그인 ==");
 		
 		while(true) {
@@ -115,10 +122,34 @@ public class MemberController {
 				continue;
 			}
 			
+			Session.login(member);
 			System.out.printf("[%s] 회원님 환영합니다\n", member.name);
 			
 			break;
 		}
+		
+	}
+
+	public void doLogout() {
+		if(Session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
+			return;
+		}
+		
+		Session.logout();
+		System.out.println("로그아웃 되었습니다");
+	}
+
+	public void showProfile() {
+		if(Session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요");
+			return;
+		}
+		
+		System.out.println("== 마이 페이지 ==");
+		System.out.printf("가입일 : %s\n", Session.loginedMember.regDate);
+		System.out.printf("아이디 : %s\n", Session.loginedMember.loginId);
+		System.out.printf("이름 : %s\n", Session.loginedMember.name);
 	}
 
 }
