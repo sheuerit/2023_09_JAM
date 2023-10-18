@@ -81,6 +81,16 @@ public class ArticleDao {
 		
 		return DBUtil.delete(conn, sql);
 	}
+
+	public Map<String, Object> getArticle(int id) {
+		
+		SecSql sql = new SecSql();
+		sql.append("SELECT *");
+		sql.append("FROM article");
+		sql.append("WHERE id = ?", id);
+
+		return DBUtil.selectRow(conn, sql);
+	}
 	
 
 }
