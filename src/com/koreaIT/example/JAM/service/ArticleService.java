@@ -20,11 +20,11 @@ public class ArticleService {
 		return articleDao.doWrite(loginedMemberId, title, body);
 	}
 
-	public List<Article> showList() {
+	public List<Article> showList(String searchKeyword) {
 		
 		List<Article> articles = new ArrayList<>();
 		
-		List<Map<String, Object>> articleListMap =  articleDao.showList();
+		List<Map<String, Object>> articleListMap =  articleDao.showList(searchKeyword);
 		
 		for (Map<String, Object> articleMap : articleListMap) {
 			articles.add(new Article(articleMap));

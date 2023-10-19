@@ -36,15 +36,22 @@ public class ArticleController {
 		System.out.printf("%d번 게시글이 생성되었습니다\n", id);
 	}
 
-	public void showList() {
+	public void showList(String cmd) {
 		System.out.println("==게시물 목록==");
+
+		String searchKeyword = cmd.substring("article list".length()).trim();
 		
-		List<Article> articles = articleService.showList();
+		List<Article> articles = articleService.showList(searchKeyword);
 
 		if (articles.size() == 0) {
 			System.out.println("게시글이 없습니다");
 			return;
 		}
+		
+		if (searchKeyword.length() > 0) {
+			System.out.println("검색어 : " + searchKeyword);
+		}
+		
 		System.out.println("번호	/	제목	/	작성자");
 		for (Article article : articles) {
 			System.out.printf("%d	/	%s	/	%s\n", article.id, article.title, article.name);
